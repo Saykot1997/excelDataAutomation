@@ -61,7 +61,7 @@ function Home() {
         <div className=' w-full h-screen bg-gray-200'>
             <div className=' w-full h-full flex justify-center items-center'>
                 <div className=' bg-white rounded shadow h-[500px] w-[500px] overflow-y-scroll scrollbar p-5'>
-                    <p className=' font-semibold text-center text-xl'>All Campaing</p>
+                    <p className=' font-semibold text-center text-xl'>All Files</p>
                     <div className=' w-full flex justify-end'>
                         <button onClick={toggleFileUploadSection} className=' shadow shadow-blue-300 text-blue-600 text-sm p-1 hover:scale-105 ease-in transition-all'>Upload File</button>
                     </div>

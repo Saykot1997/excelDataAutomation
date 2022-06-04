@@ -80,7 +80,7 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
                     {
                         file &&
                         <div className=' w-full flex justify-center'>
-                            <input value={campaingName} onChange={(e) => { setCampaingName(e.target.value) }} type="text" placeholder='Enter Campaing Name' className=' border border-blue-500 rounded p-2 focus:outline-none mr-2' />
+                            <input value={campaingName} onChange={(e) => { setCampaingName(e.target.value) }} type="text" placeholder='Enter File Name' className=' border border-blue-500 rounded p-2 focus:outline-none mr-2' />
                             <button onClick={chackData} className=' bg-purple-500 text-white rounded p-2'>Upload File</button>
                         </div>
                     }
