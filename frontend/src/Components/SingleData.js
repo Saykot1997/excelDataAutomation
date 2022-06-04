@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Host } from '../Data';
 
-function SingleData({ data, campaingName, getAllData }) {
+function SingleData({ data, campaingName, allData, setAllData, currantPageIndex }) {
 
     const [dataObjectKey, setDataObjectKey] = useState([]);
     const [changeAbleFieldsKeys, setChangeAbleFieldsKeys] = useState([]);
@@ -20,7 +20,12 @@ function SingleData({ data, campaingName, getAllData }) {
         try {
 
             await axios.post(`${Host}/api/update_data/${campaingName}/${data._id}`, updateAbleData);
-            getAllData();
+
+            const newAllData = [...allData];
+            const newData = { ...data };
+            newData[key] = value;
+            newAllData[currantPageIndex] = newData;
+            setAllData(newAllData);
             setChangeFieldValue('');
 
         } catch (error) {
