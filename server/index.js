@@ -74,6 +74,21 @@ app.get("/api/collection_data/:collectionName", async (req, res) => {
     }
 })
 
+// delete collection
+
+app.delete("/api/delete_collection/:collectionName", async (req, res) => {
+
+    try {
+
+        await mongoose.connection.db.collection(req.params.collectionName).drop();
+        res.status(200).json("Collection deleted successfully");
+
+    } catch (error) {
+
+        res.status(500).json(error)
+    }
+})
+
 // update data
 app.post("/api/update_data/:collectionName/:dataId", async (req, res) => {
 
@@ -157,6 +172,48 @@ app.get("/api/get_changeable_fields/:campaingName", async (req, res) => {
     } catch (error) {
         res.status(500).json(error)
     }
+});
+
+
+// delete changeable field values
+
+app.delete("/api/delete_changeable_field_values/:campaingName/:changeableField/:value", async (req, res) => {
+
+    const campaingName = req.params.campaingName;
+    const changeableField = req.params.changeableField;
+    const value = req.params.value;
+
+    try {
+
+        const changeAbleField = await ChangeAbleField.findOne({ campaingName: campaingName, changeableField: changeableField });
+
+        if (changeAbleField) {
+
+            const newChangeAbleField = { ...changeAbleField._doc }
+
+            if (newChangeAbleField.values.includes(value) && newChangeAbleField.values.length > 1) {
+
+                newChangeAbleField.values.splice(newChangeAbleField.values.indexOf(value), 1)
+                await ChangeAbleField.findOneAndUpdate({ campaingName: campaingName, changeableField: changeableField }, newChangeAbleField);
+                res.status(200).json("Changeable field value deleted successfully");
+                return;
+
+            } else if (newChangeAbleField.values.includes(value) && newChangeAbleField.values.length == 1) {
+
+                await ChangeAbleField.deleteOne({ campaingName: campaingName, changeableField: changeableField });
+                res.status(200).json("Changeable field value deleted successfully");
+                return;
+            }
+
+        } else {
+
+            res.status(500).json("Changeable field not found")
+        }
+    } catch (error) {
+
+        console.log(error)
+        res.status(500).json(error)
+    }
 })
 
 
@@ -174,14 +231,15 @@ app.post("/api/upload_excel_file", upload.single('file'), async (req, res) => {
 
         if (collections.find(collection => collection.name === collectionName)) {
 
-            await mongoose.connection.db.dropCollection(collectionName);
-            await mongoose.connection.db.createCollection(collectionName);
+            // await mongoose.connection.db.dropCollection(collectionName);
+            // await mongoose.connection.db.createCollection(collectionName);
+            await mongoose.connection.db.collection(collectionName).deleteMany({});
             const doc = parser.parseXls2Json(req.file.path);
             await mongoose.connection.db.collection(collectionName).insertMany(doc[0]);
 
             fs.unlink(req.file.path, (err) => {
                 if (err) throw err;
-                console.log('successfully deleted');
+                console.log('successfully deleted ' + req.file.path);
             })
 
             const collections = await mongoose.connection.db.listCollections().toArray();
@@ -195,7 +253,7 @@ app.post("/api/upload_excel_file", upload.single('file'), async (req, res) => {
 
             fs.unlink(req.file.path, (err) => {
                 if (err) throw err;
-                console.log('successfully deleted');
+                console.log('successfully deleted ' + req.file.path);
             })
 
             const collections = await mongoose.connection.db.listCollections().toArray();

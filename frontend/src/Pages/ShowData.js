@@ -84,23 +84,26 @@ function ShowData() {
         <div className=' w-full px-10 py-3 flex justify-center bg-gray-200'>
             {
                 data.length > 0 &&
-                <div className=' w-full px-10'>
-                    <p className=' text-lg font-semibold text-center capitalize'>{collectionName} Capmaing</p>
-                    <p className=' font-semibold text-lg text-center pt-2'>Showing {currantPageIndex + 1} data from {data.length} data</p>
-                    <div className=' w-full pb-5 flex justify-between pt-2'>
-                        <button onClick={goToPrevPage} className=' text-sm bg-white p-2 rounded disabled:bg-gray-300 font-semibold' disabled={currantPageIndex === 0}>Previous</button>
-                        <div className=' flex'>
-                            <div className='flex'>
-                                <input value={gotoPageNumber} onChange={(e) => setGotoPageNumber(e.target.value)} type="text" placeholder='Enter Number' className='mr-2 focus:outline-none p-2 rounded' />
-                                <button onClick={GotoPage} className=' mr-2 bg-white p-2 textsm rounded disabled:bg-gray-300 font-semibold'>Go to</button>
+                <div className=' w-full px-32'>
+                    <p className=' text-lg font-semibold text-center capitalize'>File - {collectionName}</p>
+                    <p className=' font-semibold text-sm text-center'>Showing {currantPageIndex + 1} data from {data.length} data</p>
+                    <div className='w-full flex justify-between my-3'>
+                        <div className=''>
+                            <button onClick={DownloadExcelFile} className=' bg-white p-2 text-sm rounded font-semibold mr-2 hover:bg-gray-100'>Download Excel File</button>
+                            <button onClick={toggleChangeAbleFild} className=' bg-white p-2 text-sm rounded font-semibold hover:bg-gray-100' >Set ChangeAble Fild</button>
+                        </div>
+                        <div className=' flex items-center'>
+                            <div className=' flex items-center'>
+                                <input value={gotoPageNumber} onChange={(e) => setGotoPageNumber(e.target.value)} type="text" placeholder='Enter Number' className='mr-2 focus:outline-none px-2 py-[6px] rounded' />
+                                <button onClick={GotoPage} className='bg-white p-2 text-sm rounded font-semibold mr-2 hover:bg-gray-100'>Go to</button>
                             </div>
-                            <button onClick={goToNextPage} className=' bg-white p-2 textsm rounded disabled:bg-gray-300 font-semibold' disabled={currantPageIndex === data.length - 1}>Next</button>
+                            <div className=' flex items-center'>
+                                <button onClick={goToPrevPage} className=' bg-white p-2 text-sm rounded font-semibold mr-2 hover:bg-gray-100 disabled:bg-gray-300' disabled={currantPageIndex === 0}>Previous</button>
+                                <button onClick={goToNextPage} className='bg-white p-2 text-sm rounded font-semibold hover:bg-gray-100 disabled:bg-gray-300' disabled={currantPageIndex === data.length - 1}>Next</button>
+                            </div>
                         </div>
                     </div>
-                    <div className=' w-full flex justify-between pb-5'>
-                        <button onClick={DownloadExcelFile} className=' bg-white p-2 textsm rounded font-semibold'>Download Excel File</button>
-                        <button onClick={toggleChangeAbleFild} className=' bg-white p-2 textsm rounded font-semibold' >Set ChangeAble Fild</button>
-                    </div>
+
                     <div className=' bg-white shadow rounded p-5'>
                         {
                             data.length > 0 &&

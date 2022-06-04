@@ -23,7 +23,6 @@ function SingleData({ data, campaingName, getAllData }) {
             getAllData();
             setChangeFieldValue('');
 
-
         } catch (error) {
 
             console.log(error);
@@ -72,7 +71,7 @@ function SingleData({ data, campaingName, getAllData }) {
                                         <div className=' flex justify-between'>
                                             <span className=' font-semibold'>{key}</span>
                                             <select value={changeFieldValue} onChange={(e) => { UpdateData(e.target.value, key); setChangeFieldValue(e.target.value) }} name="" id="" className=' border border-blue-600 rounded p-[2px] focus:outline-none'>
-                                                <option value="">Select</option>
+                                                <option value="">select value</option>
                                                 {
                                                     changeableFieldOptions[key].map((option, index) => {
                                                         return <option key={index} value={option}>{option}</option>
@@ -84,7 +83,7 @@ function SingleData({ data, campaingName, getAllData }) {
                                         </div>
                                     </div>
                                     :
-                                    <div className=' py-2 text-sm border-b' >
+                                    <div className=' py-1 text-sm border-b' >
                                         <div className=' flex justify-between'> <span className=' font-semibold'>{key} : </span><span>{data[key]}</span> </div>
                                     </div>
                             }

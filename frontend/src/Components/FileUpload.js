@@ -73,7 +73,7 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
                     {
                         !file &&
                         <div className=' flex justify-center items-center'>
-                            <label htmlFor="file" className=' bg-blue-500 text-white rounded p-2'>Select File</label>
+                            <label htmlFor="file" className=' bg-blue-500 text-white rounded p-2 cursor-pointer'>Select File</label>
                             <input onChange={(e) => { setFile(e.target.files[0]) }} type="file" id='file' className=' hidden' />
                         </div>
                     }

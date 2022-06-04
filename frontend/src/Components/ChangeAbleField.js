@@ -10,22 +10,27 @@ function ChangeAbleField({ toggleChangeAbleFild, data, campaingName, getAllData 
     const [selectedFieldValueQuantity, setSelectedFieldValueQuantity] = useState([]);
     const [changeAbleFields, setChangeAbleFields] = useState([]);
 
+
+    const get_changeable_fields = async () => {
+
+        try {
+
+            const res = await axios.get(`${Host}/api/get_changeable_fields/${campaingName}`);
+            setChangeAbleFields(res.data);
+
+        } catch (error) {
+
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
 
         if (data) {
             setDataObjectKey(Object.keys(data[0]));
         }
+        get_changeable_fields();
 
-        try {
-            const get_changeable_fields = async () => {
-                const res = await axios.get(`${Host}/api/get_changeable_fields/${campaingName}`);
-                setChangeAbleFields(res.data);
-            }
-            get_changeable_fields();
-
-        } catch (error) {
-            console.log(error);
-        }
     }, [data])
 
     const ClearAllFields = () => {
@@ -80,13 +85,33 @@ function ChangeAbleField({ toggleChangeAbleFild, data, campaingName, getAllData 
         }
     }
 
+    const DeleteChangeAbleValue = async (campaingName, fieldName, value) => {
+
+        try {
+
+            const data = {
+                campaingName: campaingName,
+                changeableField: fieldName,
+                value: value,
+            }
+
+            await axios.delete(`${Host}/api/delete_changeable_field_values/${campaingName}/${fieldName}/${value}`, data);
+            get_changeable_fields();
+            getAllData();
+
+        } catch (error) {
+
+            console.log(error);
+        }
+    }
+
     return (
-        <div className=' w-full h-screen fixed top-0 right-0 bg-black bg-opacity-50'>
-            <div className=' w-full flex justify-end p-10'>
-                <button onClick={toggleChangeAbleFild} className="bg-red-600 rounded p-2 text-white">Close</button>
+        <div className='w-full h-screen fixed top-0 right-0 bg-black bg-opacity-50'>
+            <div className=' w-full flex justify-end p-5'>
+                <button onClick={toggleChangeAbleFild} className="bg-red-600 rounded py-[6px] px-2 text-white">Close</button>
             </div>
             <div className=' w-full flex justify-center'>
-                <div className=' bg-white h-[550px] overflow-y-scroll p-5'>
+                <div className=' bg-white h-[450px] overflow-y-scroll scrollbar p-5'>
                     <p className=' mb-3 text-center font-semibold text-lg'>Changeable Fields</p>
                     <select value={selectedField} onChange={(e) => { setSelectedField(e.target.value) }} name="" id="" className=' border border-blue-500 p-2 rounded focus:outline-none'>
                         <option value="">Select Changeable Field</option>
@@ -99,29 +124,29 @@ function ChangeAbleField({ toggleChangeAbleFild, data, campaingName, getAllData 
                         }
                     </select>
                     <div className=' w-full flex justify-between mt-5 items-start'>
-                        <div>
+                        <div className=''>
                             {
                                 selectedFieldValueQuantity.map((value, index) => {
                                     return (
-                                        <div className=' my-2'>
-                                            <input onChange={(e) => changeFieldValue(e.target.value, index)} type="text" placeholder='Enter Field Value' className='border border-blue-500 p-2 rounded focus:outline-none' />
+                                        <div className=' mb-2'>
+                                            <input onChange={(e) => changeFieldValue(e.target.value, index)} type="text" placeholder='Enter Field Value' className='border border-blue-500 py-[4px] px-2 rounded focus:outline-none' />
                                         </div>
                                     )
                                 })
                             }
                         </div>
-                        <div>
+                        <div className=''>
                             {
                                 selectedFieldValueQuantity.length > 0 &&
-                                <button onClick={ClearAllFields} className=' bg-red-600 text-white rounded p-2 mr-2 hover:bg-red-700'>Clear All Fields</button>
+                                <button onClick={ClearAllFields} className='text-sm p-1 shadow-sm shadow-red-300 text-red-600 hover:scale-105 ease-in transition-all mr-3'>Clear All Fields</button>
                             }
-                            <button onClick={IncrementFieldQuantity} className=' text-white bg-blue-600 hover:bg-blue-700 p-2 rounded focus:outline-none'>Add Field</button>
+                            <button onClick={IncrementFieldQuantity} className=' shadow shadow-blue-300 text-blue-600 text-sm p-1 hover:scale-105 ease-in transition-all'>Add Field</button>
                         </div>
                     </div>
                     {
                         selectedFieldValueQuantity.length > 0 &&
                         <div className=' w-full flex justify-center'>
-                            <button onClick={SaveChangeAbleValue} className=' text-white bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded focus:outline-none'>Save</button>
+                            <button onClick={SaveChangeAbleValue} className=' shadow shadow-blue-300 text-blue-600 text-sm px-2 py-[6px] hover:scale-105 ease-in transition-all'>Save</button>
                         </div>
                     }
                     {
@@ -138,7 +163,10 @@ function ChangeAbleField({ toggleChangeAbleFild, data, campaingName, getAllData 
                                                 {
                                                     field.values.map((value, index) => {
                                                         return (
-                                                            <p className='text-gray-700 ml-5 text-sm my-2'>{value}</p>
+                                                            <div className='flex items-center justify-between py-2 border-b'>
+                                                                <p className='text-gray-700 ml-5 text-sm'>{value}</p>
+                                                                <button onClick={() => DeleteChangeAbleValue(field.campaingName, field.changeableField, value)} className='text-sm p-1 shadow-sm shadow-red-300 text-red-600 hover:scale-105 ease-in transition-all mr-3'>Delete</button>
+                                                            </div>
                                                         )
                                                     })
                                                 }
