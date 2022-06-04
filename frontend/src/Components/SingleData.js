@@ -62,7 +62,7 @@ function SingleData({ data, campaingName, allData, setAllData, currantPageIndex 
         } catch (error) {
             console.log(error);
         }
-    }, [data])
+    }, [])
 
     return (
         <div>
