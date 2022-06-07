@@ -3,12 +3,14 @@ import { Host } from "../Data"
 import axios from 'axios';
 import { loginSuccess } from "../Redux/User_slice"
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
 
@@ -23,6 +25,7 @@ function Login() {
 
             const res = await axios.post(`${Host}/api/login`, data);
             dispatch(loginSuccess(res.data));
+            navigate('/');
 
         } catch (error) {
 
@@ -31,7 +34,7 @@ function Login() {
     }
 
     return (
-        <div className=' bg-gray-100 h-screen w-full flex justify-center pt-20'>
+        <div className=' bg-gray-100 min-h-screen w-full flex justify-center pt-20'>
             <div>
                 <div className=' bg-white rounded shadow w-[500px] p-10'>
                     <p className=' text-center mb-5 text-3xl font-semibold'>Login</p>

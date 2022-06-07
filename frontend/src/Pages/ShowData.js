@@ -81,7 +81,7 @@ function ShowData() {
 
 
     return (
-        <div className=' w-full px-10 py-3 flex justify-center bg-gray-200'>
+        <div className=' w-full px-10 py-3 flex justify-center min-h-screen bg-gray-200'>
             {
                 data.length > 0 &&
                 <div className=' w-full px-32'>
