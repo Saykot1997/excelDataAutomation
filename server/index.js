@@ -239,6 +239,8 @@ app.post("/api/upload_excel_file", upload.single('file'), async (req, res) => {
 
         function clean(obj) {
 
+            obj = Object.assign({ [changeAbleFieldName]: "" }, obj)
+
             for (let propName in obj) {
 
                 const propertyAfterTrim = obj[propName].toString().trim();
