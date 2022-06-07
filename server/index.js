@@ -9,6 +9,9 @@ const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
 const ChangeAbleField = require('./Models/ChangeAbleField');
+const User = require('./Models/User_model');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 app.use(cors());
@@ -47,6 +50,84 @@ const upload = multer({
         }
     }
 })
+
+// login api
+
+app.post('/api/login', async (req, res) => {
+
+    const { email, password } = req.body;
+
+    if (!email) {
+
+        return res.status(400).json('email is required');
+
+    } else if (!password) {
+
+        return res.status(400).json('password is required')
+    }
+
+    try {
+
+        const user = await User.findOne({ email: email });
+
+        if (!user) {
+            return res.status(400).json('user not found');
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password)
+
+        if (isMatch) {
+
+            const token = jwt.sign({ id: user._id }, process.env.TOKENSECRATE);
+            return res.status(200).json({ token: token, ...user._doc });
+
+        } else {
+
+            return res.status(400).json('password is incorrect');
+        }
+
+    } catch (error) {
+
+        return res.status(500).json('something went wrong')
+    }
+})
+
+// register api
+
+// app.post('/api/register', async (req, res) => {
+
+//     const { email, password } = req.body;
+
+//     if (!email) {
+//         return res.status(400).json('email is required');
+//     }
+
+//     if (!password) {
+//         return res.status(400).json('password is required')
+//     }
+
+//     try {
+
+//         const user = await User.findOne({ email: email });
+
+//         if (user) {
+//             return res.status(400).json('user already exists');
+//         }
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const newUser = new User({
+//             email: email,
+//             password: hashedPassword
+//         })
+
+//         await newUser.save();
+//         return res.status(200).json('user created successfully');
+
+//     } catch (error) {
+
+//         return res.status(500).json('something went wrong')
+//     }
+// })
 
 
 // get collection list
