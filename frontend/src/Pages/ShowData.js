@@ -107,7 +107,7 @@ function ShowData() {
                     <div className=' bg-white shadow rounded p-5'>
                         {
                             data.length > 0 &&
-                            <SingleData data={data[currantPageIndex]} allData={data} currantPageIndex={currantPageIndex} campaingName={collectionName} setAllData={setData} />
+                            <SingleData goToNextPage={goToNextPage} data={data[currantPageIndex]} allData={data} currantPageIndex={currantPageIndex} campaingName={collectionName} setAllData={setData} />
                         }
                     </div>
                     {

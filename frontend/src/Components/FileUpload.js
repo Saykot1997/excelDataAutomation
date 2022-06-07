@@ -6,6 +6,7 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
 
     const [file, setFile] = useState(null);
     const [campaingName, setCampaingName] = useState('');
+    const [changeableField, setChangeableField] = useState('');
 
     const chackData = () => {
 
@@ -35,6 +36,7 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
         const formData = new FormData();
         formData.append('file', file);
         formData.append('campaingName', campaingName);
+        formData.append('changeableFieldName', changeableField);
 
         const config = {
             headers: {
@@ -69,7 +71,7 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
                 <button onClick={toggleFileUploadSection} className="bg-red-600 text-white rounded p-2">Close</button>
             </div>
             <div className=' w-full flex justify-center'>
-                <div className=' bg-white shadow rounded p-32'>
+                <div className=' bg-white shadow rounded p-20'>
                     {
                         !file &&
                         <div className=' flex justify-center items-center'>
@@ -79,9 +81,12 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
                     }
                     {
                         file &&
-                        <div className=' w-full flex justify-center'>
+                        <div className=' w-full'>
                             <input value={campaingName} onChange={(e) => { setCampaingName(e.target.value) }} type="text" placeholder='Enter File Name' className=' border border-blue-500 rounded p-2 focus:outline-none mr-2' />
-                            <button onClick={chackData} className=' bg-purple-500 text-white rounded p-2'>Upload File</button>
+                            <input type="text" placeholder='Changeable field name' value={changeableField} onChange={(e) => setChangeableField(e.target.value)} className=' border border-blue-500 rounded p-2 focus:outline-none mr-2' />
+                            <div className=' mt-3 flex justify-center'>
+                                <buton onClick={chackData} className=' bg-purple-500 text-white rounded p-2 cursor-pointer'>Upload File</buton>
+                            </div>
                         </div>
                     }
                 </div>

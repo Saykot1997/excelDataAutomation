@@ -223,19 +223,43 @@ app.post("/api/upload_excel_file", upload.single('file'), async (req, res) => {
     try {
 
         if (!req.body.campaingName) {
-            res.status(400).json("campaing name in require")
+            return res.status(400).json("campaing name in require")
+        }
+
+        if (!req.body.changeableFieldName) {
+            return res.status(400).json("changeable field name in require")
         }
 
         const collectionName = req.body.campaingName;
+        const changeAbleFieldName = req.body.changeableFieldName;
         const collections = await mongoose.connection.db.listCollections().toArray();
+        const doc = parser.parseXls2Json(req.file.path);
 
-        if (collections.find(collection => collection.name === collectionName)) {
+        const newData = []
 
-            // await mongoose.connection.db.dropCollection(collectionName);
-            // await mongoose.connection.db.createCollection(collectionName);
+        function clean(obj) {
+
+            for (let propName in obj) {
+
+                const propertyAfterTrim = obj[propName].toString().trim();
+
+                if (propertyAfterTrim === "" && propName !== changeAbleFieldName) {
+                    delete obj[propName];
+                }
+            }
+            return obj
+        }
+
+        doc[0].forEach((data, index) => {
+            newData.push(clean(data))
+        })
+
+        const isExist = collections.find(collection => collection.name === collectionName);
+
+        if (isExist) {
+
             await mongoose.connection.db.collection(collectionName).deleteMany({});
-            const doc = parser.parseXls2Json(req.file.path);
-            await mongoose.connection.db.collection(collectionName).insertMany(doc[0]);
+            await mongoose.connection.db.collection(collectionName).insertMany(newData);
 
             fs.unlink(req.file.path, (err) => {
                 if (err) throw err;
@@ -243,13 +267,12 @@ app.post("/api/upload_excel_file", upload.single('file'), async (req, res) => {
             })
 
             const collections = await mongoose.connection.db.listCollections().toArray();
-            res.status(200).json(collections);
+            return res.status(200).json(collections);
 
         } else {
 
             await mongoose.connection.db.createCollection(collectionName);
-            const doc = parser.parseXls2Json(req.file.path);
-            await mongoose.connection.db.collection(collectionName).insertMany(doc[0]);
+            await mongoose.connection.db.collection(collectionName).insertMany(newData);
 
             fs.unlink(req.file.path, (err) => {
                 if (err) throw err;
@@ -257,13 +280,13 @@ app.post("/api/upload_excel_file", upload.single('file'), async (req, res) => {
             })
 
             const collections = await mongoose.connection.db.listCollections().toArray();
-            res.status(200).json(collections);
+            return res.status(200).json(collections);
         }
 
     } catch (error) {
 
         console.log(error);
-        res.status(500).send(error);
+        return res.status(500).send(error);
     }
 });
 
