@@ -93,41 +93,41 @@ app.post('/api/login', async (req, res) => {
     }
 })
 
-// register api
+// // register api
 
-app.post('/api/register', async (req, res) => {
+// app.post('/api/register', async (req, res) => {
 
-    const { email, password } = req.body;
+//     const { email, password } = req.body;
 
-    if (!email) {
-        return res.status(400).json('email is required');
-    }
+//     if (!email) {
+//         return res.status(400).json('email is required');
+//     }
 
-    if (!password) {
-        return res.status(400).json('password is required')
-    }
+//     if (!password) {
+//         return res.status(400).json('password is required')
+//     }
 
-    try {
-        const user = await User.findOne({ email: email });
+//     try {
+//         const user = await User.findOne({ email: email });
 
-        if (user) {
-            return res.status(400).json('user already exists');
-        }
+//         if (user) {
+//             return res.status(400).json('user already exists');
+//         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({
-            email: email,
-            password: hashedPassword
-        })
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const newUser = new User({
+//             email: email,
+//             password: hashedPassword
+//         })
 
-        await newUser.save();
-        return res.status(200).json('user created successfully');
+//         await newUser.save();
+//         return res.status(200).json('user created successfully');
 
-    } catch (error) {
+//     } catch (error) {
 
-        return res.status(500).json('something went wrong')
-    }
-})
+//         return res.status(500).json('something went wrong')
+//     }
+// })
 
 
 // get collection list
