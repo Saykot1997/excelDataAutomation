@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
 import { Host } from '../Data';
 
 function ChangeAbleField({ toggleChangeAbleFild, data, campaingName, getAllData }) {
@@ -9,13 +10,18 @@ function ChangeAbleField({ toggleChangeAbleFild, data, campaingName, getAllData 
     const [selectedFieldValue, setSelectedFieldValue] = useState([]);
     const [selectedFieldValueQuantity, setSelectedFieldValueQuantity] = useState([]);
     const [changeAbleFields, setChangeAbleFields] = useState([]);
+    const user = useSelector(state => state.User.User);
 
 
     const get_changeable_fields = async () => {
 
         try {
 
-            const res = await axios.get(`${Host}/api/get_changeable_fields/${campaingName}`);
+            const res = await axios.get(`${Host}/api/get_changeable_fields/${campaingName}`, {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
             setChangeAbleFields(res.data);
 
         } catch (error) {
@@ -74,7 +80,11 @@ function ChangeAbleField({ toggleChangeAbleFild, data, campaingName, getAllData 
                 values: selectedFieldValue,
             }
 
-            const res = await axios.post(`${Host}/api/set_changeable_field`, data);
+            const res = await axios.post(`${Host}/api/set_changeable_field`, data, {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
             setChangeAbleFields([...changeAbleFields, res.data]);
             ClearAllFields()
             setSelectedField('');
@@ -95,7 +105,11 @@ function ChangeAbleField({ toggleChangeAbleFild, data, campaingName, getAllData 
                 value: value,
             }
 
-            await axios.delete(`${Host}/api/delete_changeable_field_values/${campaingName}/${fieldName}/${value}`, data);
+            await axios.put(`${Host}/api/delete_changeable_field_values/${campaingName}/${fieldName}/${value}`, data, {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
             get_changeable_fields();
             getAllData();
 

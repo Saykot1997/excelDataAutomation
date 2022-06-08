@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
 import { Host } from '../Data';
 
 function SingleData({ data, campaingName, allData, setAllData, currantPageIndex, goToNextPage }) {
@@ -7,6 +8,7 @@ function SingleData({ data, campaingName, allData, setAllData, currantPageIndex,
     const [dataObjectKey, setDataObjectKey] = useState([]);
     const [changeAbleFieldsKeys, setChangeAbleFieldsKeys] = useState([]);
     const [changeableFieldOptions, setChangeableFieldOptions] = useState({});
+    const user = useSelector(state => state.User.User);
 
     const UpdateData = async (value, key) => {
 
@@ -18,7 +20,11 @@ function SingleData({ data, campaingName, allData, setAllData, currantPageIndex,
 
         try {
 
-            await axios.post(`${Host}/api/update_data/${campaingName}/${data._id}`, updateAbleData);
+            await axios.post(`${Host}/api/update_data/${campaingName}/${data._id}`, updateAbleData, {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
             const newAllData = [...allData];
             const newData = { ...data };
             newData[key] = value;
@@ -41,7 +47,11 @@ function SingleData({ data, campaingName, allData, setAllData, currantPageIndex,
 
             const get_changeable_fields = async () => {
 
-                const res = await axios.get(`${Host}/api/get_changeable_fields/${campaingName}`);
+                const res = await axios.get(`${Host}/api/get_changeable_fields/${campaingName}`, {
+                    headers: {
+                        'Authorization': `Bearer ${user.token}`
+                    }
+                });
 
                 const newOptions = {};
                 res.data.forEach(field => {

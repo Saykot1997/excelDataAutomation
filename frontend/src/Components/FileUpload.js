@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Host } from '../Data'
+import { useSelector } from 'react-redux';
 
 function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseCollections }) {
 
     const [file, setFile] = useState(null);
     const [campaingName, setCampaingName] = useState('');
     const [changeableField, setChangeableField] = useState('');
+    const user = useSelector(state => state.User.User);
 
     const chackData = () => {
 
@@ -40,7 +42,8 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
 
         const config = {
             headers: {
-                'content-type': 'multipart/form-data'
+                'content-type': 'multipart/form-data',
+                'Authorization': `Bearer ${user.token}`
             }
         }
 
@@ -49,7 +52,7 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
             const res = await axios.post(`${Host}/api/upload_excel_file`, formData, config);
             const newCollections = [];
             res.data.forEach(collection => {
-                if (collection.name !== "changeablefiends") {
+                if (collection.name !== "changeablefiends" && collection.name !== "users") {
                     newCollections.push(collection.name);
                 }
             })
@@ -59,7 +62,6 @@ function FileUpload({ toggleFileUploadSection, dataBaseCollections, setDataBaseC
         } catch (error) {
             console.log(error);
         }
-
     }
 
 

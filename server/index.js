@@ -12,6 +12,7 @@ const ChangeAbleField = require('./Models/ChangeAbleField');
 const User = require('./Models/User_model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Authgurd = require('./Authgurd/Authgurd');
 
 dotenv.config();
 app.use(cors());
@@ -94,44 +95,44 @@ app.post('/api/login', async (req, res) => {
 
 // register api
 
-// app.post('/api/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
 
-//     const { email, password } = req.body;
+    const { email, password } = req.body;
 
-//     if (!email) {
-//         return res.status(400).json('email is required');
-//     }
+    if (!email) {
+        return res.status(400).json('email is required');
+    }
 
-//     if (!password) {
-//         return res.status(400).json('password is required')
-//     }
+    if (!password) {
+        return res.status(400).json('password is required')
+    }
 
-//     try {
+    try {
 
-//         const user = await User.findOne({ email: email });
+        const user = await User.findOne({ email: email });
 
-//         if (user) {
-//             return res.status(400).json('user already exists');
-//         }
+        if (user) {
+            return res.status(400).json('user already exists');
+        }
 
-//         const hashedPassword = await bcrypt.hash(password, 10);
-//         const newUser = new User({
-//             email: email,
-//             password: hashedPassword
-//         })
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({
+            email: email,
+            password: hashedPassword
+        })
 
-//         await newUser.save();
-//         return res.status(200).json('user created successfully');
+        await newUser.save();
+        return res.status(200).json('user created successfully');
 
-//     } catch (error) {
+    } catch (error) {
 
-//         return res.status(500).json('something went wrong')
-//     }
-// })
+        return res.status(500).json('something went wrong')
+    }
+})
 
 
 // get collection list
-app.get("/api/getCollectionList", async (req, res) => {
+app.get("/api/getCollectionList", Authgurd, async (req, res) => {
 
     try {
         const collections = await mongoose.connection.db.listCollections().toArray();
@@ -143,7 +144,7 @@ app.get("/api/getCollectionList", async (req, res) => {
 })
 
 // get collection data
-app.get("/api/collection_data/:collectionName", async (req, res) => {
+app.get("/api/collection_data/:collectionName", Authgurd, async (req, res) => {
 
     try {
         const collection = await mongoose.connection.db.collection(req.params.collectionName).find({}).toArray();
@@ -157,11 +158,12 @@ app.get("/api/collection_data/:collectionName", async (req, res) => {
 
 // delete collection
 
-app.delete("/api/delete_collection/:collectionName", async (req, res) => {
+app.delete("/api/delete_collection/:collectionName", Authgurd, async (req, res) => {
 
     try {
 
         await mongoose.connection.db.collection(req.params.collectionName).drop();
+        await ChangeAbleField.deleteMany({ campaingName: req.params.collectionName });
         res.status(200).json("Collection deleted successfully");
 
     } catch (error) {
@@ -171,7 +173,7 @@ app.delete("/api/delete_collection/:collectionName", async (req, res) => {
 })
 
 // update data
-app.post("/api/update_data/:collectionName/:dataId", async (req, res) => {
+app.post("/api/update_data/:collectionName/:dataId", Authgurd, async (req, res) => {
 
     try {
 
@@ -196,7 +198,7 @@ app.post("/api/update_data/:collectionName/:dataId", async (req, res) => {
 
 // set changeable field
 
-app.post("/api/set_changeable_field", async (req, res) => {
+app.post("/api/set_changeable_field", Authgurd, async (req, res) => {
 
     if (!req.body.campaingName) {
         res.status(500).json("campaingName is required")
@@ -244,7 +246,7 @@ app.post("/api/set_changeable_field", async (req, res) => {
 
 // get changeable field
 
-app.get("/api/get_changeable_fields/:campaingName", async (req, res) => {
+app.get("/api/get_changeable_fields/:campaingName", Authgurd, async (req, res) => {
 
     try {
         const changeAbleField = await ChangeAbleField.find({ campaingName: req.params.campaingName });
@@ -258,7 +260,7 @@ app.get("/api/get_changeable_fields/:campaingName", async (req, res) => {
 
 // delete changeable field values
 
-app.delete("/api/delete_changeable_field_values/:campaingName/:changeableField/:value", async (req, res) => {
+app.put("/api/delete_changeable_field_values/:campaingName/:changeableField/:value", Authgurd, async (req, res) => {
 
     const campaingName = req.params.campaingName;
     const changeableField = req.params.changeableField;
@@ -299,7 +301,7 @@ app.delete("/api/delete_changeable_field_values/:campaingName/:changeableField/:
 
 
 // excel file upload
-app.post("/api/upload_excel_file", upload.single('file'), async (req, res) => {
+app.post("/api/upload_excel_file", Authgurd, upload.single('file'), async (req, res) => {
 
     try {
 
@@ -376,7 +378,7 @@ app.post("/api/upload_excel_file", upload.single('file'), async (req, res) => {
 
 // download excel file
 
-app.get("/api/download_excel_file/:collectionName", async (req, res) => {
+app.get("/api/download_excel_file/:collectionName", Authgurd, async (req, res) => {
 
     try {
 

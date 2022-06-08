@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Host } from '../Data';
 import SingleData from '../Components/SingleData';
 import ChangeAbleField from '../Components/ChangeAbleField';
+import { useSelector } from 'react-redux';
 
 function ShowData() {
 
@@ -13,6 +14,7 @@ function ShowData() {
     const [currantPageIndex, setCurrantPageIndex] = useState(0);
     const [showChangeAbleFild, setShowChangeAbleFild] = useState(false);
     const [gotoPageNumber, setGotoPageNumber] = useState("");
+    const user = useSelector(state => state.User.User);
 
     const GotoPage = () => {
 
@@ -52,7 +54,11 @@ function ShowData() {
     }
 
     const getCollectionData = async () => {
-        const res = await axios.get(`${Host}/api/collection_data/${collectionName}`);
+        const res = await axios.get(`${Host}/api/collection_data/${collectionName}`, {
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }
+        });
         setData(res.data);
     }
 
@@ -69,6 +75,9 @@ function ShowData() {
         axios.get(`${Host}/api/download_excel_file/${collectionName}`, {
             method: 'GET',
             responseType: 'blob',
+            headers: {
+                'Authorization': `Bearer ${user.token}`
+            }
         }).then((response) => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
