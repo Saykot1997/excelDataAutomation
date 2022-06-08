@@ -108,7 +108,6 @@ app.post('/api/register', async (req, res) => {
     }
 
     try {
-
         const user = await User.findOne({ email: email });
 
         if (user) {
